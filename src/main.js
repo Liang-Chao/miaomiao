@@ -3,6 +3,17 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
+import axios from 'axios'
+Vue.prototype.axios = axios // 将axios方法 赋予vue prototype，其他文件中可直接用this.axios 而不用import axios
+
+Vue.filter('ellipsis', (str, arg) => {
+  if (str.length > arg) {
+    return str.substring(0, (arg - 4)) + '...'
+  } else {
+    return str
+  }
+})
+
 Vue.config.productionTip = false
 
 new Vue({

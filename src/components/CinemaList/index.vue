@@ -1,47 +1,19 @@
 <template>
    <div class="cinema_body">
      <ul>
-       <li>
+       <li v-for="item in cinemaList" :key="item.cinemaId">
          <div>
-           <span>大地影院（澳东世纪店）</span>
-           <span class="q"><span class="price">22.9</span>元起</span>
+           <span>{{item.name}}</span>
+           <span class="q">￥<span class="price">{{item.lowPrice / 100}}</span>元起</span>
          </div>
          <div class="address">
-           <span>金州区大连经济技术开发区澳东世纪3层</span>
-           <span>1763.5km</span>
+           <span>{{item.address | ellipsis(21)}}</span>
+           <span>{{item.Distance.toFixed(2)}}km</span>
          </div>
-         <div class="card">
+         <!-- <div class="card">
            <div>小吃</div>
            <div>折扣卡</div>
-         </div>
-       </li>
-       <li>
-         <div>
-           <span>大地影院（澳东世纪店）</span>
-           <span class="q"><span class="price">22.9</span>元起</span>
-         </div>
-         <div class="address">
-           <span>金州区大连经济技术开发区澳东世纪3层</span>
-           <span>1763.5km</span>
-         </div>
-         <div class="card">
-           <div>小吃</div>
-           <div>折扣卡</div>
-         </div>
-       </li>
-       <li>
-         <div>
-           <span>大地影院（澳东世纪店）</span>
-           <span class="q"><span class="price">22.9</span>元起</span>
-         </div>
-         <div class="address">
-           <span>金州区大连经济技术开发区澳东世纪3层</span>
-           <span>1763.5km</span>
-         </div>
-         <div class="card">
-           <div>小吃</div>
-           <div>折扣卡</div>
-         </div>
+         </div> -->
        </li>
      </ul>
    </div>
@@ -49,7 +21,27 @@
 
 <script>
 export default {
-  name: 'CinemaList'
+  name: 'CinemaList',
+  data () {
+    return {
+      cinemaList: []
+    }
+  },
+  mounted () {
+    this.axios({
+      url: 'https://m.maizuo.com/gateway?cityId=520100&ticketFlag=1&k=307472',
+      headers: {  
+        'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.0.4","e":"15894577104363686775341","bc":"520100"}',
+        'X-Host': 'mall.film-ticket.cinema.list'
+      }
+    }).then( res => {
+      console.log(res.data)
+      var msg = res.data.msg
+      if (msg === 'ok') {
+        this.cinemaList = res.data.data.cinemas
+      }
+    })
+  }
 }
 </script>
 

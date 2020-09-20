@@ -1,6 +1,6 @@
 <template>
   <div id="main">
-    <Header title="喵喵电影" />
+    <Header title="猪猪电影" />
     <div id="content">
       <div class="movie_menu">
         <router-link tag="div" to="/movie/city" class="city_name">
@@ -45,6 +45,7 @@ export default {
   flex-direction: column;
 }
 #content .movie_menu {
+  position: relative;
   width: 100%;
   height: 45px;
   border-bottom: 1px solid #e6e6e6;

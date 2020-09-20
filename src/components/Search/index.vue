@@ -3,28 +3,19 @@
     <div class="search_input">
       <div class="search_input_wrapper">
         <i class="iconfont">&#xe616;</i>
-        <input type="text">
+        <input type="text" v-model="searchMessage">
       </div>
     </div>
     <div class="search_result">
       <h3>电影/电视剧/综艺</h3>
       <ul>
-        <li>
-          <div class=img><img src="/images/movie_1.jpg" alt=""></div>
+        <li v-for="item in movieList" :key="item.filmId">
+          <div class=img><img :src="item.poster" alt=""></div>
           <div class="info">
-            <p><span>信条</span><span>7.7</span></p>
-            <p style="fontSize:12px;">世界存亡危在旦夕，“信条”一词是惟一...</p>
-            <p>科幻|动作|剧情</p>
-            <p>2020-09-05</p>
-          </div>
-        </li>
-        <li>
-          <div class=img><img src="/images/movie_2.jpg" alt=""></div>
-          <div class="info">
-            <p><span>八佰</span><span>7.1</span></p>
-            <p style="fontSize:12px">1937年淞沪会战末期，国民革命军第88师...</p>
-            <p>剧情|历史|战争</p>
-            <p>2020-09-05</p>
+            <p><span>{{item.name}}</span><span>{{item.grade}}</span></p>
+            <p>{{item.synopsis | ellipsis(23)}}</p>
+            <p>{{item.category}}</p>
+            <p>{{item.nation}} | {{item.premiereAt}}</p>
           </div>
         </li>
       </ul>
@@ -34,7 +25,48 @@
 
 <script>
 export default {
-  name: 'Search'
+  name: 'Search',
+  data () {
+    return {
+      searchMessage: '',
+      movieList: []
+    }
+  },
+  watch: {
+    searchMessage (newVal) {
+      // console.log(newVal)
+      this.axios({
+        url: 'https://m.maizuo.com/gateway?cityId=520100&pageNum=1&pageSize=10&type=1',
+        headers: {  
+          'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.0.4","e":"15894577104363686775341","bc":"520100"}',
+          'X-Host': 'mall.film-ticket.film.list'
+        }
+      }).then( res => {
+        // console.log(res.data)
+        var msg = res.data.msg
+        var movies = res.data.data.films
+        if (msg === 'ok' && movies) {
+          this.movieList = res.data.data.films
+        }
+      })
+    }
+  },
+  mounted () {
+    this.axios({
+      url: 'https://m.maizuo.com/gateway?cityId=520100&pageNum=1&pageSize=10&type=1',
+      headers: {  
+        'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.0.4","e":"15894577104363686775341","bc":"520100"}',
+        'X-Host': 'mall.film-ticket.film.list'
+      }
+    }).then( res => {
+      // console.log(res.data)
+      var msg = res.data.msg
+      if (msg === 'ok') {
+        this.movieList = res.data.data.films
+      }
+    })
+  }
+
 }
 </script>
 
@@ -52,4 +84,5 @@ export default {
 .search_body .search_result .info p{ height: 22px; display: flex; line-height: 22px; font-size: 12px;}
 .search_body .search_result .info p:nth-of-type(1) span:nth-of-type(1){ font-size: 18px; flex:1; }
 .search_body .search_result .info p:nth-of-type(1) span:nth-of-type(2){ font-size: 16px; color:#fc7103;}
+
 </style>

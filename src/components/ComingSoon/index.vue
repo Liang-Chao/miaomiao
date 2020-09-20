@@ -1,25 +1,13 @@
 <template>
   <div class="movie_body">
     <ul>
-      <li>
-        <div class="pic_show"><img src="/images/movie_1.jpg" ></div>
+      <li v-for="item in movieList" :key="item.filmId">
+        <div class="pic_show"><img :src="item.poster" ></div>
         <div class="info_list">
-          <h2>信条</h2>
-          <p><span class="person">2346</span>人想看</p>
-          <p>主演：克里斯托弗·诺兰 约翰·大卫</p>
-          <p>2020-09-05上映</p>
-        </div>
-        <div class="btn_pre">
-          预售
-        </div>
-      </li>
-      <li>
-        <div class="pic_show"><img src="/images/movie_2.jpg" ></div>
-        <div class="info_list">
-          <h2>八佰</h2>
-          <p><span class="person">3320</span>人想看</p>
-          <p>主演：管虎 张译 姜武 王千源</p>
-          <p>2020-09-05上映</p>
+          <h2>{{item.name}} <span class="film_type">{{item.filmType.name}}</span></h2>
+          <p>上映时间：<span class="person">{{item.premiereAt}}</span></p>
+          <p>主演：<span v-for="(actors, index) in item.actors" :key="index">{{actors.name}} </span></p>
+          <p>{{item.category}} | {{item.runtime}}分钟</p>
         </div>
         <div class="btn_pre">
           预售
@@ -32,6 +20,26 @@
 <script>
 export default {
   name: 'ComingSoon',
+  data () {
+    return {
+      movieList: []
+    }
+  },
+  mounted () {
+    this.axios({
+      url: 'https://m.maizuo.com/gateway?cityId=520100&pageNum=1&pageSize=10&type=2',
+      headers: {  
+        'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.0.4","e":"15894577104363686775341","bc":"520100"}',
+        'X-Host': 'mall.film-ticket.film.list'
+      }
+    }).then( res => {
+      console.log(res.data)
+      var msg = res.data.msg
+      if (msg === 'ok') {
+        this.movieList = res.data.data.films
+      }
+    })
+  }
 }
 </script>
 
@@ -82,6 +90,10 @@ export default {
 }
 .movie_body .info_list .person {
   font-size: 12px;
+}
+.movie_body .info_list .film_type {
+  color: gray;
+  font-size: 15px;
 }
 .movie_body .info_list img {
   width: 50px;
