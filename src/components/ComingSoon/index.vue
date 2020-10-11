@@ -1,19 +1,23 @@
 <template>
   <div class="movie_body">
-    <ul>
-      <li v-for="item in movieList" :key="item.filmId">
-        <div class="pic_show"><img :src="item.poster" ></div>
-        <div class="info_list">
-          <h2>{{item.name}} <span class="film_type">{{item.filmType.name}}</span></h2>
-          <p>上映时间：<span class="person">{{item.premiereAt}}</span></p>
-          <p>主演：<span v-for="(actors, index) in item.actors" :key="index">{{actors.name}} </span></p>
-          <p>{{item.category}} | {{item.runtime}}分钟</p>
-        </div>
-        <div class="btn_pre">
-          预售
-        </div>
-      </li>
-    </ul>
+    <Scroller v-if="BS_isShow" :handleToScroll="handleToScroll" :handleToTouchEnd="handleToTouchEnd">
+      <ul>
+        <li class="pullDown"><i class="iconfont" v-if="this.pullDownMsg">&#xe7ba;</i> {{this.pullDownMsg}}</li>
+        <li v-for="item in movieList" :key="item.filmId">
+          <div class="pic_show" @tap="handleToDetail()"><img :src="item.poster" ></div>
+          <div class="info_list">
+            <h2 @click="handleToDetail()">{{item.name}} <span class="film_type">{{item.filmType.name}}</span></h2>
+            <p>上映时间：<span class="person">{{item.premiereAt}}</span></p>
+            <p>主演：<span v-for="(actors, index) in item.actors" :key="index">{{actors.name}} </span></p>
+            <p>{{item.category}} | {{item.runtime}}分钟</p>
+          </div>
+          <div class="btn_pre">
+            预售
+          </div>
+        </li>
+      </ul>
+    </Scroller>
+    <Loading v-else />
   </div>
 </template>
 
@@ -22,23 +26,55 @@ export default {
   name: 'ComingSoon',
   data () {
     return {
-      movieList: []
+      movieList: [],
+      pullDownMsg: '',
+      BS_isShow: 0,
+      prevCityId: -1
     }
   },
-  mounted () {
+  activated () {
+    if (this.prevCityId === this.$store.state.city.id) {return} // 仅在变更城市的时候数据更新
+    this.BS_isShow = 0
     this.axios({
-      url: 'https://m.maizuo.com/gateway?cityId=520100&pageNum=1&pageSize=10&type=2',
+      url: `https://m.maizuo.com/gateway?cityId=${this.$store.state.city.id}&pageNum=1&pageSize=10&type=2`,
       headers: {  
-        'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.0.4","e":"15894577104363686775341","bc":"520100"}',
+        'X-Client-Info': `{"a":"3000","ch":"1002","v":"5.0.4","e":"15894577104363686775341","bc":"${this.$store.state.city.id}"}`,
         'X-Host': 'mall.film-ticket.film.list'
       }
     }).then( res => {
-      console.log(res.data)
+      // console.log(res.data)
       var msg = res.data.msg
       if (msg === 'ok') {
         this.movieList = res.data.data.films
+        this.prevCityId = this.$store.state.city.id
       }
     })
+  },
+  methods: {
+    handleToDetail () {
+      console.log('handleToDetail')
+    },
+    handleToScroll (pos) {
+      if (pos.y > 30) {
+        this.pullDownMsg = '正在刷新...'
+      }
+    },
+    handleToTouchEnd (pos) {
+      if (pos.y > 30) {
+        this.pullDownMsg = '刷新完成！'
+        setTimeout(() => {
+          this.pullDownMsg = ''
+        }, 200) 
+      }
+    },
+    handleToRefresh () {
+      this.BS_isShow = 0
+      this.BS_isShow = 1
+      // console.log('refresh_comingSoon')
+    }
+  },
+  watch: {
+    movieList: 'handleToRefresh'
   }
 }
 </script>
@@ -61,10 +97,15 @@ export default {
 }
 .movie_body .pic_show {
   width: 64px;
-  height: 90px;
+  height: 100px;
+  position: relative; 
+  margin: 0 auto;
 }
 .movie_body .pic_show img {
   width: 100%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }
 .movie_body .info_list {
   margin-left: 10px;

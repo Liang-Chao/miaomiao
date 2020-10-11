@@ -36,9 +36,9 @@ export default {
     searchMessage (newVal) {
       // console.log(newVal)
       this.axios({
-        url: 'https://m.maizuo.com/gateway?cityId=520100&pageNum=1&pageSize=10&type=1',
+        url: `https://m.maizuo.com/gateway?cityId=${this.$store.state.city.id}&pageNum=1&pageSize=10&type=1`,
         headers: {  
-          'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.0.4","e":"15894577104363686775341","bc":"520100"}',
+          'X-Client-Info': `{"a":"3000","ch":"1002","v":"5.0.4","e":"15894577104363686775341","bc":"${this.$store.state.city.id}"}`,
           'X-Host': 'mall.film-ticket.film.list'
         }
       }).then( res => {
