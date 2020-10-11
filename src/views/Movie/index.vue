@@ -4,7 +4,7 @@
     <div id="content">
       <div class="movie_menu">
         <router-link tag="div" to="/movie/city" class="city_name">
-          <span>贵阳</span><i class="iconfont">&#xe74e;</i>
+          <span>{{$store.state.city.nm}}</span><i class="iconfont">&#xe74e;</i>
         </router-link>
         <div class="hot_switch">
           <router-link tag="div" to="/movie/nowPlaying" class="hot_item">正在热映</router-link>
@@ -25,12 +25,21 @@
 <script>
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+// import {messageBox} from '@/components/JS'
 
 export default {
   name: 'Movie',
   components: {
     Header,
     Footer
+  },
+  mounted () {
+    // messageBox({
+    //   title: '定位',
+    //   content: this.$store.state.city.nm,
+    //   cancel: '取消',
+    //   ok: '切换定位'
+    // })
   }
 }
 </script>

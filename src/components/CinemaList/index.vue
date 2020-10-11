@@ -1,21 +1,24 @@
 <template>
    <div class="cinema_body">
-     <ul>
-       <li v-for="item in cinemaList" :key="item.cinemaId">
-         <div>
-           <span>{{item.name}}</span>
-           <span class="q">￥<span class="price">{{item.lowPrice / 100}}</span>元起</span>
-         </div>
-         <div class="address">
-           <span>{{item.address | ellipsis(21)}}</span>
-           <span>{{item.Distance.toFixed(2)}}km</span>
-         </div>
-         <!-- <div class="card">
-           <div>小吃</div>
-           <div>折扣卡</div>
-         </div> -->
-       </li>
-     </ul>
+    <Scroller v-if="BS_isShow">
+      <ul>
+        <li v-for="item in cinemaList" :key="item.cinemaId">
+          <div>
+            <span>{{item.name}}</span>
+            <span class="q">￥<span class="price">{{item.lowPrice / 100}}</span>元起</span>
+          </div>
+          <div class="address">
+            <span>{{item.address | ellipsis(21)}}</span>
+            <span>{{item.Distance.toFixed(2)}}km</span>
+          </div>
+          <!-- <div class="card">
+            <div>小吃</div>
+            <div>折扣卡</div>
+          </div> -->
+        </li>
+      </ul>
+    </Scroller>
+    <Loading v-else />
    </div>
 </template>
 
@@ -24,23 +27,37 @@ export default {
   name: 'CinemaList',
   data () {
     return {
-      cinemaList: []
+      cinemaList: [],
+      BS_isShow: 0,
+      prevCityId: -1
     }
   },
-  mounted () {
+  activated () {
+    if (this.prevCityId === this.$store.state.city.id) {return} // 仅在变更城市的时候数据更新
+    this.BS_isShow = 0
     this.axios({
-      url: 'https://m.maizuo.com/gateway?cityId=520100&ticketFlag=1&k=307472',
+      url: `https://m.maizuo.com/gateway?cityId=${this.$store.state.city.id}&ticketFlag=1&k=307472`,
       headers: {  
-        'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.0.4","e":"15894577104363686775341","bc":"520100"}',
+        'X-Client-Info': `{"a":"3000","ch":"1002","v":"5.0.4","e":"15894577104363686775341","bc":"${this.$store.state.city.id}"}`,
         'X-Host': 'mall.film-ticket.cinema.list'
       }
     }).then( res => {
-      console.log(res.data)
+      // console.log(res.data)
       var msg = res.data.msg
       if (msg === 'ok') {
         this.cinemaList = res.data.data.cinemas
+        this.prevCityId = this.$store.state.city.id
       }
     })
+  },
+  methods: {
+    handleToRefresh () {
+      this.BS_isShow = 0
+      this.BS_isShow = 1
+    }
+  },
+  watch: {
+    cinemaList: 'handleToRefresh'
   }
 }
 </script>
