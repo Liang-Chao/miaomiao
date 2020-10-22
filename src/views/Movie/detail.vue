@@ -5,7 +5,7 @@
     </Header>
     <div id="content" class="contentDetail">
       <div class="detail_list">
-        <div class="detail_list_bg"></div>
+        <div class="detail_list_bg" :style="{ 'background-image': `url(${filmInfo.poster})`}"></div>
         <div class="detail_list_filter"></div>
         <div class="detail_list_content">
           <div class="detail_list_img">
@@ -16,7 +16,7 @@
             <p>{{filmInfo.category}}</p>
             <p>{{filmInfo.director}}</p>
             <p>{{filmInfo.nation}} | {{filmInfo.runtime}}分钟</p>
-            <p>语言: {{filmInfo.language}}</p>
+            <p>上映时间: {{filmInfo.premiereAt}}</p>
           </div>
         </div>
       </div>
@@ -102,7 +102,7 @@ export default {
   position: relative;
   overflow: hidden;
 }
-.detai_list .detai_list_bg {
+.detail_list .detail_list_bg {
   width: 100%;
   height: 100%;
   background: 0 40%;
@@ -122,7 +122,7 @@ export default {
   color: rgb(245, 152, 66);
   font-size: 15px;
 }
-.detail_list .detail_list_info p{ color:white; line-height: 20px; font-size: 14px; color:#ccc;}
+.detail_list .detail_list_info p{ color:white; line-height: 25px; font-size: 14px; color:#ccc;}
 #content .detail_intro{ padding: 10px;}
 #content .detail_player{ margin:20px;}
 .detail_player .swiper-slide{ width:70px; margin-right: 20px; text-align: center; font-size: 14px;}
