@@ -1,5 +1,6 @@
 <template>
   <div id="main">
+    <router-view name="detail" />
     <Header title="猪猪电影" />
     <div id="content">
       <div class="movie_menu">
