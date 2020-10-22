@@ -4,9 +4,9 @@
       <ul>
         <li class="pullDown"><i class="iconfont" v-if="this.pullDownMsg">&#xe7ba;</i> {{this.pullDownMsg}}</li>
         <li v-for="item in movieList" :key="item.filmId">
-          <div class="pic_show" @tap="handleToDetail()"><img :src="item.poster" ></div>
+          <div class="pic_show" @click="handleToDetail(item.filmId)"><img :src="item.poster" ></div>
           <div class="info_list">
-            <h2 @click="handleToDetail()">{{item.name}} <span class="film_type">{{item.filmType.name}}</span></h2>
+            <h2 @click="handleToDetail(item.filmId)">{{item.name}} <span class="film_type">{{item.filmType.name}}</span></h2>
             <p>观众评分 <span class="grade">{{item.grade}}</span></p>
             <p>主演：<span v-for="(actors, index) in item.actors" :key="index">{{actors.name}} </span></p>
             <p>{{item.category}} | {{item.runtime}}分钟</p>
@@ -77,8 +77,9 @@ export default {
     })
   },
   methods: {
-    handleToDetail () {
-      console.log('handleToDetail')
+    handleToDetail (filmId) {
+      // console.log(filmId)
+      this.$router.push(`/movie/detail/${filmId}`)
     },
     handleToScroll (pos) {
       if (pos.y > 30) {
